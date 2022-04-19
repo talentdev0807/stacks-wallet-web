@@ -9,9 +9,9 @@ import ExploreAppsFullDone from '@assets/images/onboarding/steps/explore-apps-li
 import ExploreAppsPopup from '@assets/images/onboarding/steps/explore-apps-light-sm.png';
 import ExploreAppsPopupDone from '@assets/images/onboarding/steps/explore-apps-light-done-sm.png';
 import { SuggestedFirstSteps, SuggestedFirstStepStatus } from '@shared/models/onboarding-types';
+import { onboardingActions } from '@app/store/onboarding/onboarding.actions';
 
 import { SuggestedFirstStep } from './suggested-first-step';
-import { onboardingActions } from '@app/store/onboarding/onboarding.actions';
 
 const exploreAppsExternalRoute = 'https://www.stacks.co/explore/discover-apps#apps';
 

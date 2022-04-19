@@ -42,7 +42,7 @@ export function Home() {
   );
 
   useEffect(() => {
-    if (decodedAuthRequest) navigate(RouteUrls.ChooseAccount);
+    if (decodedAuthRequest) navigate(RouteUrls.AccountAuthentication);
     // This handles syncing b/w views, so it can likely be removed
     // once we force onboarding via full page view
     if (!hasSkippedFundAccount && !availableStxBalance?.isGreaterThan(0))

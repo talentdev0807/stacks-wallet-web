@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect } from 'react';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { Stack } from '@stacks/ui';
+import { Flex, Stack } from '@stacks/ui';
 
 import { useRouteHeader } from '@app/common/hooks/use-route-header';
 import { useFeeSchema } from '@app/common/validation/use-fee-schema';
@@ -15,6 +15,7 @@ import { PostConditions } from '@app/pages/transaction-request/components/post-c
 import { StxTransferDetails } from '@app/pages/transaction-request/components/stx-transfer-details/stx-transfer-details';
 import { PostConditionModeWarning } from '@app/pages/transaction-request/components/post-condition-mode-warning';
 import { TransactionError } from '@app/pages/transaction-request/components/transaction-error/transaction-error';
+
 import {
   useTransactionRequestState,
   useUpdateTransactionBroadcastError,
@@ -32,6 +33,8 @@ import { useAnalytics } from '@app/common/hooks/analytics/use-analytics';
 import { Estimations } from '@shared/models/fees-types';
 import { PopupHeader } from '@app/features/current-account/popup-header';
 
+// import { useTransactionValidator } from './hooks/use-transaction-validator';
+
 function TransactionRequestBase(): JSX.Element | null {
   useNextTxNonce();
   const transactionRequest = useTransactionRequestState();
@@ -43,6 +46,9 @@ function TransactionRequestBase(): JSX.Element | null {
   const { isSponsored } = useUnsignedTransactionFee();
   const feeSchema = useFeeSchema();
   const analytics = useAnalytics();
+  // const isValidTransaction = useTransactionRequestValidation();
+  // const isDomainApproved = useIsDomainPreApproved();
+  // const txValidationResult = useTransactionValidator();
 
   const validationSchema = !isSponsored ? yup.object({ fee: feeSchema() }) : null;
 
@@ -88,31 +94,39 @@ function TransactionRequestBase(): JSX.Element | null {
   if (!transactionRequest) return null;
 
   return (
-    <Stack px="loose" spacing="loose">
-      <PageTop />
-      <PostConditionModeWarning />
-      <TransactionError />
-      <PostConditions />
-      {transactionRequest.txType === 'contract_call' && <ContractCallDetails />}
-      {transactionRequest.txType === 'token_transfer' && <StxTransferDetails />}
-      {transactionRequest.txType === 'smart_contract' && <ContractDeployDetails />}
-      <Formik
-        initialValues={{ fee: '', feeType: Estimations[Estimations.Middle] }}
-        onSubmit={onSubmit}
-        validateOnChange={false}
-        validateOnBlur={false}
-        validateOnMount={false}
-        validationSchema={validationSchema}
-      >
-        {() => (
-          <>
-            <FeeForm />
-            <SubmitAction />
-            <HighFeeDrawer />
-          </>
-        )}
-      </Formik>
-    </Stack>
+    <Flex alignItems="center" flexDirection="column" width="100%">
+      <Stack px="loose" spacing="loose">
+        <PageTop />
+        <PostConditionModeWarning />
+        <TransactionError />
+        {/* {isValidTransaction ? null : (
+        <ErrorMessage
+          title="Unsigned transaction"
+          body="This transaction has been made from an unsigned source"
+        />
+      )} */}
+        <PostConditions />
+        {transactionRequest.txType === 'contract_call' && <ContractCallDetails />}
+        {transactionRequest.txType === 'token_transfer' && <StxTransferDetails />}
+        {transactionRequest.txType === 'smart_contract' && <ContractDeployDetails />}
+        <Formik
+          initialValues={{ fee: '', feeType: Estimations[Estimations.Middle] }}
+          onSubmit={onSubmit}
+          validateOnChange={false}
+          validateOnBlur={false}
+          validateOnMount={false}
+          validationSchema={validationSchema}
+        >
+          {() => (
+            <>
+              <FeeForm />
+              <SubmitAction />
+              <HighFeeDrawer />
+            </>
+          )}
+        </Formik>
+      </Stack>
+    </Flex>
   );
 }
 
