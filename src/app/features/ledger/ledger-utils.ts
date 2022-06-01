@@ -17,6 +17,8 @@ import { safeAwait } from '@stacks/ui';
 import { LedgerTxSigningProvider } from './ledger-tx-signing.context';
 import { logger } from '@shared/logger';
 
+const ledgerVersionFromWhichAuthIsSupported = '1.0.1'; // tdb
+
 function decompressSecp256k1PublicKey(publicKey: string) {
   const point = secp.Point.fromHex(publicKey);
   return secp.utils.bytesToHex(point.toRawBytes(false));

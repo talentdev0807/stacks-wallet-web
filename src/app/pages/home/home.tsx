@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Flex, Stack } from '@stacks/ui';
 
@@ -12,31 +12,21 @@ import { ActivityList } from '@app/features/activity-list/account-activity';
 import { BalancesList } from '@app/features/balances-list/balances-list';
 import { SuggestedFirstSteps } from '@app/features/suggested-first-steps/suggested-first-steps';
 import { useSuggestedFirstSteps } from '@app/features/suggested-first-steps/hooks/use-suggested-first-steps';
-import { CurrentAccount } from '@app/pages/home/components/account-area';
 
 import { HomeActions } from '@app/pages/home/components/home-actions';
-<<<<<<< HEAD
-import { useAccounts } from '@app/store/accounts/account.hooks';
-=======
-import { useCurrentAccount } from '@app/store/accounts/account.hooks';
->>>>>>> b1a39aca4 (refactor: home buttons, open in new pages, fixes #2453)
+
 import { RouteUrls } from '@shared/route-urls';
 import {
   useCurrentAccount,
   useCurrentAccountAvailableStxBalance,
 } from '@app/store/accounts/account.hooks';
-import { HomePageSelectors } from '@tests/page-objects/home.selectors';
 
-import { AccountInfoFetcher, BalanceFetcher } from './components/fetchers';
 import { HomeTabs } from './components/home-tabs';
 
 import { FullPageLoadingSpinner } from '@app/components/loading-spinner';
-import { OnboardingStepsList } from './components/onboarding-steps-list';
-import { useOnboardingSteps } from './hooks/use-onboarding-steps';
-import { useTrackFirstDeposit } from '@app/common/hooks/analytics/transactions-analytics.hooks';
-import { FullPageLoadingSpinner } from '@app/components/loading-spinner';
-
 import { CurrentAccount } from './components/account-area';
+import { useSkipFundAccount } from '@app/store/onboarding/onboarding.selectors';
+import { HomePageSelectors } from '@tests/page-objects/home.selectors';
 
 export function Home() {
   const { decodedAuthRequest } = useOnboardingState();
@@ -67,10 +57,6 @@ export function Home() {
 
   return (
     <>
-      <Suspense fallback={null}>
-        {account?.address && <BalanceFetcher address={account.address} />}
-        {account?.address && <AccountInfoFetcher address={account.address} />}
-      </Suspense>
       <Stack alignItems="center" width="100%" spacing="extra-tight">
         {showSuggestedFirstSteps && <SuggestedFirstSteps />}
         <Stack
