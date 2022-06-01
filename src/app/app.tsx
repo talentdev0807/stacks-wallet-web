@@ -19,7 +19,6 @@ import { Devtools } from '@app/features/devtool/devtools';
 import { AppRoutes } from '@app/routes/app-routes';
 import { persistor, store } from '@app/store';
 import { jotaiWrappedReactQueryQueryClient as queryClient } from '@app/store/common/common.hooks';
-import WebRequestWrapper from './web-request-wrapper';
 
 const reactQueryDevToolsEnabled = false;
 
@@ -34,14 +33,12 @@ export function App() {
               <Suspense fallback={<NewAccountLoadingSpinner />}>
                 <Router>
                   <AppErrorBoundary>
-                    <WebRequestWrapper>
-                      <AppRoutes />
-                      <SwitchAccountDrawer />
-                      <NetworksDrawer />
-                      <EditNonceDrawer />
-                      <IncreaseFeeDrawer />
-                      <SettingsDropdown />
-                    </WebRequestWrapper>
+                    <AppRoutes />
+                    <SwitchAccountDrawer />
+                    <NetworksDrawer />
+                    <EditNonceDrawer />
+                    <IncreaseFeeDrawer />
+                    <SettingsDropdown />
                   </AppErrorBoundary>
                   <Toaster
                     position="bottom-center"
