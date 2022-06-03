@@ -29,15 +29,13 @@ export function AccountRequest() {
     if (!accounts) throw new Error('Cannot request account details with no account');
 
     if (!tabId || !id || !origin) {
-      logger.error(
-        'Missing necessary search param values. All values are necessary to respond to app'
-      );
+      logger.error('Missing necessary search param values needed to request account');
       return;
     }
 
     grantDomainPermission(origin);
     sendRequestAccountResponseToTab({ tabId, id, account: accounts[index] });
-    await delay(1000);
+    await delay(60);
     window.close();
   };
 

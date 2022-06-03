@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { AppContext } from '@common/context';
 import { Box, Text, Flex, BoxProps, Button } from '@stacks/ui';
-import { Auth } from './auth';
+import { JwtAuth } from './auth';
 import { Tab } from './tab';
 import { Status } from './status';
 import { Counter } from './counter';
@@ -63,62 +63,69 @@ const Page: React.FC<{ tab: Tabs; setTab: (value: Tabs) => void }> = ({ tab, set
 export const Home: React.FC = () => {
   const state = useContext(AppContext);
   const [tab, setTab] = useState<Tabs>('debug');
-  const { doSTXTransfer } = useConnect();
   const [account, setAccount] = useState<any>(null);
   return (
     <Container>
       <Text as="h1" textStyle="display.large" fontSize={7} mb={'loose'} display="block">
         Testnet Demo
       </Text>
-      {state.userData ? <Page tab={tab} setTab={setTab} /> : <Auth />}
-      <Button
-        my="base"
-        onClick={() => {
-          // console.log('request accounts app', getStacksProvider());
-          getStacksProvider()
-            .request('stx_requestAccounts')
-            .then(resp => {
-              setAccount(resp);
-              console.log('request acct resp', resp);
+      {state.userData || account ? (
+        <Page tab={tab} setTab={setTab} />
+      ) : (
+        <>
+          <JwtAuth />
+          <Button
+            size="lg"
+            my="base"
+            onClick={() => {
+              // console.log('request accounts app', getStacksProvider());
+              getStacksProvider()
+                .request('stx_requestAccounts')
+                .then(resp => {
+                  setAccount(resp);
+                  console.log('request acct resp', resp);
+                });
+            }}
+          >
+            Request accounts
+          </Button>
+        </>
+      )}
+      {/* 
+        <Button
+          my="base"
+          ml="base"
+          // isDisabled={account === null}
+          onClick={() => {
+            // getStacksProvider()
+            //   .request('stx_signTransactionRequest', [{}])
+            //   .then(resp => {
+            //     // setAccount(resp);
+            //     console.log('transaction req from inpage', resp);
+            //   });
+            // const stxAddress = getAddressFromPublicKey(
+            //   account[0].stxPublicKey,
+            //   TransactionVersion.Testnet
+            // );
+            // console.log({ stxAddress });
+            doSTXTransfer({
+              network: network as any,
+              amount: '100',
+              memo: 'From demo app',
+              recipient: 'ST1X6M947Z7E58CNE0H8YJVJTVKS9VW0PHEG3NHN3',
+              stxAddress: 'ST17YZQB1228EK9MPHQXA8GC4G3HVWZ66X779FEBY',
+              // stxAddress,
+              onFinish: data => {
+                console.log('finished stx transfer!', data);
+              },
+              onCancel: () => {
+                console.log('popup closed!');
+              },
             });
-        }}
-      >
-        Request accounts
-      </Button>
-      <Button
-        my="base"
-        ml="base"
-        // isDisabled={account === null}
-        onClick={() => {
-          // getStacksProvider()
-          //   .request('stx_signTransactionRequest', [{}])
-          //   .then(resp => {
-          //     // setAccount(resp);
-          //     console.log('transaction req from inpage', resp);
-          //   });
-          // const stxAddress = getAddressFromPublicKey(
-          //   account[0].stxPublicKey,
-          //   TransactionVersion.Testnet
-          // );
-          // console.log({ stxAddress });
-          doSTXTransfer({
-            network: network as any,
-            amount: '100',
-            memo: 'From demo app',
-            recipient: 'ST1X6M947Z7E58CNE0H8YJVJTVKS9VW0PHEG3NHN3',
-            stxAddress: 'ST17YZQB1228EK9MPHQXA8GC4G3HVWZ66X779FEBY',
-            // stxAddress,
-            onFinish: data => {
-              console.log('finished stx transfer!', data);
-            },
-            onCancel: () => {
-              console.log('popup closed!');
-            },
-          });
-        }}
-      >
-        Sign transaction
-      </Button>
+          }}
+        >
+          Sign transaction
+        </Button> */}
 
       {/* <Button
         my="base"
