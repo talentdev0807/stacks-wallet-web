@@ -21,6 +21,7 @@ import {
   inferLegacyMessage,
 } from './legacy-external-message-handler';
 import { popupCenter } from './popup-center';
+import { requestAccounts } from './methods/request-accounts';
 
 initSentry();
 initContextMenuActions();
@@ -59,13 +60,7 @@ chrome.runtime.onConnect.addListener(port =>
 
         switch (message.method) {
           case RpcMethods[RpcMethods.stx_requestAccounts]: {
-            const params = new URLSearchParams();
-            params.set('tabId', port.sender.tab.id.toString());
-            params.set('id', message.id);
-            params.set('origin', port.sender.origin.toString());
-            popupCenter({
-              url: `/popup-center.html#${RouteUrls.AccountRequest}?${params.toString()}`,
-            });
+            requestAccounts(port.sender.tab.id, port.sender.origin, message);
             break;
           }
         }
