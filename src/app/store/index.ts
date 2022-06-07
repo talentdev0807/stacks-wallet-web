@@ -3,6 +3,7 @@ import { atomWithStore } from 'jotai/redux';
 import devToolsEnhancer from 'remote-redux-devtools';
 import { AnyAction, combineReducers, configureStore, ThunkAction } from '@reduxjs/toolkit';
 import {
+  createMigrate,
   persistStore,
   persistReducer,
   FLUSH,
@@ -33,12 +34,26 @@ const rootReducer = combineReducers({
   analytics: analyticsSlice.reducer,
 });
 
+const migrations = {
+  2: (state: any) => {
+    return {
+      ...state,
+      onboarding: {
+        hasCompletedExploreAppsStep: state.onboarding.stepsStatus['Explore apps'],
+        hasHiddenSuggestedFirstSteps: state.onboarding.hideSteps,
+        hasSkippedFundAccount: false,
+      },
+    };
+  },
+};
+
 const persistConfig = {
   key: 'root',
-  version: 1,
+  version: 2,
   storage,
   serialize: true,
   whitelist: ['keys', 'chains', 'onboarding', 'analytics'],
+  migrate: createMigrate(migrations, { debug: false }),
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

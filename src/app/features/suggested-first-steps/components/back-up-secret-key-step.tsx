@@ -2,25 +2,29 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAnalytics } from '@app/common/hooks/analytics/use-analytics';
-import { useSuggestedFirstStepsStatus } from '@app/store/onboarding/onboarding.selectors';
 import BackUpSecretKeyFull from '@assets/images/onboarding/steps/backup-key-light.png';
 import BackUpSecretKeyFullDone from '@assets/images/onboarding/steps/backup-key-light-done.png';
 import BackUpSecretKeyPopup from '@assets/images/onboarding/steps/backup-key-light-sm.png';
 import BackUpSecretKeyPopupDone from '@assets/images/onboarding/steps/backup-key-light-done-sm.png';
-import { SuggestedFirstSteps, SuggestedFirstStepStatus } from '@shared/models/onboarding-types';
 import { RouteUrls } from '@shared/route-urls';
 
 import { SuggestedFirstStep } from './suggested-first-step';
 
-export function BackUpSecretKeyStep() {
+const eventName = 'back_up_secret_key';
+
+interface BackUpSecretKeyStepProps {
+  isComplete: boolean;
+  onComplete(): void;
+}
+export function BackUpSecretKeyStep({ isComplete, onComplete }: BackUpSecretKeyStepProps) {
   const analytics = useAnalytics();
   const navigate = useNavigate();
-  const stepsStatus = useSuggestedFirstStepsStatus();
 
   const onSelectStep = useCallback(() => {
-    void analytics.track('select_next_step', { step: 'back_up_secret_key' });
+    onComplete();
+    void analytics.track('select_next_step', { step: eventName });
     navigate(RouteUrls.ViewSecretKey);
-  }, [analytics, navigate]);
+  }, [analytics, navigate, onComplete]);
 
   return (
     <SuggestedFirstStep
@@ -30,10 +34,8 @@ export function BackUpSecretKeyStep() {
       imageFullDone={BackUpSecretKeyFullDone}
       imagePopup={BackUpSecretKeyPopup}
       imagePopupDone={BackUpSecretKeyPopupDone}
-      isComplete={
-        stepsStatus[SuggestedFirstSteps.BackUpSecretKey] === SuggestedFirstStepStatus.Complete
-      }
-      key={SuggestedFirstSteps.BackUpSecretKey}
+      isComplete={isComplete}
+      key={eventName}
       onClick={onSelectStep}
       title="Back up secret key"
     />

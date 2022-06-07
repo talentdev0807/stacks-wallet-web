@@ -1,24 +1,32 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { useAnalytics } from '@app/common/hooks/analytics/use-analytics';
 import { openInNewTab } from '@app/common/utils/open-in-new-tab';
-import { useSuggestedFirstStepsStatus } from '@app/store/onboarding/onboarding.selectors';
 import BuyNftFull from '@assets/images/onboarding/steps/buy-nft-light.png';
 import BuyNftFullDone from '@assets/images/onboarding/steps/buy-nft-light-done.png';
 import BuyNftPopup from '@assets/images/onboarding/steps/buy-nft-light-sm.png';
 import BuyNftPopupDone from '@assets/images/onboarding/steps/buy-nft-light-done-sm.png';
-import { SuggestedFirstSteps, SuggestedFirstStepStatus } from '@shared/models/onboarding-types';
+import { useCurrentAccountUnanchoredBalances } from '@app/query/balance/balance.hooks';
 
 import { SuggestedFirstStep } from './suggested-first-step';
 
 const buyNftExternalRoute = 'https://www.hiro.so/wallet-faq/nfts';
+const eventName = 'buy_nft';
 
-export function BuyNftStep() {
+interface BuyNftStepStepProps {
+  isComplete: boolean;
+  onComplete(): void;
+}
+export function BuyNftStep({ isComplete, onComplete }: BuyNftStepStepProps) {
   const analytics = useAnalytics();
-  const stepsStatus = useSuggestedFirstStepsStatus();
+  const { data: balances } = useCurrentAccountUnanchoredBalances();
+
+  useEffect(() => {
+    if (balances && Object.keys(balances?.non_fungible_tokens).length > 0) onComplete();
+  }, [balances, balances?.non_fungible_tokens, onComplete]);
 
   const onSelectStep = useCallback(() => {
-    void analytics.track('select_next_step', { step: 'buy_nft' });
+    void analytics.track('select_next_step', { step: eventName });
     openInNewTab(buyNftExternalRoute);
   }, [analytics]);
 
@@ -30,9 +38,9 @@ export function BuyNftStep() {
       imageFullDone={BuyNftFullDone}
       imagePopup={BuyNftPopup}
       imagePopupDone={BuyNftPopupDone}
-      isComplete={stepsStatus[SuggestedFirstSteps.BuyNft] === SuggestedFirstStepStatus.Complete}
+      isComplete={isComplete}
       isExternalRoute
-      key={SuggestedFirstSteps.BuyNft}
+      key={eventName}
       onClick={onSelectStep}
       title="Buy an NFT"
     />
